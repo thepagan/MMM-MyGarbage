@@ -128,11 +128,17 @@ Module.register('MMM-MyGarbage', {
       const dateContainer = document.createElement("span");
       dateContainer.classList.add("garbage-date");
       const today = moment().startOf("day");
-      const pickUpDate = moment(pickup.pickupDate);
-      if(today.isSame(pickUpDate)) dateContainer.innerHTML = this.translate("TODAY");
-      else if(today.clone().add(1,"days").isSame(pickUpDate)) dateContainer.innerHTML = this.translate("TOMORROW");
-      else if(today.clone().add(7,"days").isAfter(pickUpDate)) dateContainer.innerHTML = this.capFirst(pickUpDate.format("dddd"));
-      else dateContainer.innerHTML = this.capFirst(pickUpDate.format(this.config.dateFormat));
+      const pickUpDate = moment(pickup.pickupDate).startOf("day");
+
+      if (pickUpDate.isSame(today, "day")) {
+        dateContainer.innerHTML = this.translate("TODAY");
+      } else if (pickUpDate.isSame(today.clone().add(1, "days"), "day")) {
+        dateContainer.innerHTML = this.translate("TOMORROW");
+      } else if (pickUpDate.isBefore(today.clone().add(7, "days"), "day")) {
+        dateContainer.innerHTML = this.capFirst(pickUpDate.format("dddd"));
+      } else {
+        dateContainer.innerHTML = this.capFirst(pickUpDate.format(this.config.dateFormat));
+      }
       pickupContainer.appendChild(dateContainer);
 
       // Icons
